@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise Técnica NF-e 2026 — Notas Técnicas SEFAZ</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e14;
+  --bg2: #0f1520;
+  --bg3: #141c2b;
+  --surface: #192236;
+  --border: #1e2d45;
+  --border2: #253550;
+  --text: #c8d8f0;
+  --text2: #7a9bbf;
+  --text3: #4a6a8a;
+  --accent: #00c6ff;
+  --accent2: #0070e0;
+  --green: #00e5a0;
+  --green2: #007a52;
+  --yellow: #ffd166;
+  --yellow2: #a07800;
+  --red: #ff5a6e;
+  --red2: #8a1525;
+  --purple: #b07aff;
+  --orange: #ff8c42;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 260px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.sidebar-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.sidebar-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+nav { padding: 12px 0; flex: 1; }
+
+.nav-section {
+  padding: 6px 20px 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 20px;
+  font-size: 12px;
+  color: var(--text2);
+  text-decoration: none;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+
+.nav-link:hover { color: var(--accent); background: rgba(0,198,255,0.04); border-left-color: var(--accent); }
+.nav-link.active { color: var(--accent); background: rgba(0,198,255,0.07); border-left-color: var(--accent); }
+
+.nav-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* ── URGENCY BADGE IN SIDEBAR ── */
+.nav-badge {
+  margin-left: auto;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+.badge-red { background: rgba(255,90,110,0.15); color: var(--red); }
+.badge-yellow { background: rgba(255,209,102,0.15); color: var(--yellow); }
+.badge-green { background: rgba(0,229,160,0.15); color: var(--green); }
+
+/* ── MAIN ── */
+main {
+  margin-left: 260px;
+  min-height: 100vh;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #0a0e14 0%, #0d1525 50%, #0a1020 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 60px 60px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: 'NF-e 2026';
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  font-family: var(--font-mono);
+  font-size: 160px;
+  font-weight: 700;
+  color: rgba(0,198,255,0.03);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-kicker::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--accent);
+}
+
+.hero h1 {
+  font-family: var(--font-mono);
+  font-size: 38px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 span { color: var(--accent); }
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text2);
+  max-width: 640px;
+  margin-bottom: 32px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 680px;
+}
+
+.hero-stat {
+  flex: 1;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+}
+.hero-stat:last-child { border-right: none; }
+
+.hero-stat-n {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.hero-stat-l {
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── ALERT BAR ── */
+.alert-bar {
+  background: rgba(255,90,110,0.08);
+  border-top: 1px solid rgba(255,90,110,0.2);
+  border-bottom: 1px solid rgba(255,90,110,0.2);
+  padding: 12px 60px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.alert-bar .alert-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.alert-bar strong { color: var(--red); }
+
+/* ── SECTION ── */
+.section {
+  padding: 48px 60px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.section h2 {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section h2 .h2-num {
+  font-size: 13px;
+  color: var(--text3);
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+.section h3 {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 28px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3::before {
+  content: '//';
+  color: var(--text3);
+}
+
+p { color: var(--text2); margin-bottom: 14px; }
+
+/* ── NT CARDS ── */
+.nt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.nt-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.nt-card:hover { border-color: var(--border2); }
+
+.nt-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.nt-card.nt-001::before { background: var(--purple); }
+.nt-card.nt-002::before { background: var(--red); }
+.nt-card.nt-003::before { background: var(--orange); }
+.nt-card.nt-004::before { background: var(--green); }
+
+.nt-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  margin-bottom: 6px;
+  letter-spacing: 0.1em;
+}
+
+.nt-card.nt-001 .nt-number { color: var(--purple); }
+.nt-card.nt-002 .nt-number { color: var(--red); }
+.nt-card.nt-003 .nt-number { color: var(--orange); }
+.nt-card.nt-004 .nt-number { color: var(--green); }
+
+.nt-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.nt-desc {
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.nt-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nt-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--text3);
+}
+
+.nt-tag.impact-critical { border-color: rgba(255,90,110,0.4); color: var(--red); background: rgba(255,90,110,0.06); }
+.nt-tag.impact-high { border-color: rgba(255,209,102,0.4); color: var(--yellow); background: rgba(255,209,102,0.06); }
+.nt-tag.impact-medium { border-color: rgba(0,229,160,0.4); color: var(--green); background: rgba(0,229,160,0.06); }
+
+/* ── TABLE ── */
+.table-wrap {
+  overflow-x: auto;
+  margin: 16px 0 24px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+thead tr {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border2);
+}
+
+th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 10px 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+td {
+  padding: 9px 14px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.015); }
+
+.tag-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(0,198,255,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.rej { color: var(--red); font-weight: 600; font-size: 11px; }
+.alrt { color: var(--yellow); font-weight: 600; font-size: 11px; }
+.exc { color: var(--green); font-weight: 600; font-size: 11px; }
+.new-tag { color: var(--green); font-family: var(--font-mono); font-size: 11px; }
+.changed-tag { color: var(--yellow); font-family: var(--font-mono); font-size: 11px; }
+
+.msg-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  background: var(--bg3);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── XML BLOCK ── */
+.xml-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0 24px;
+}
+
+.xml-block {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.xml-block-header {
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.xml-block.xml-before .xml-block-header { color: var(--text3); background: rgba(0,0,0,0.2); }
+.xml-block.xml-after .xml-block-header { color: var(--green); background: rgba(0,229,160,0.05); }
+
+.xml-block pre {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text2);
+  padding: 14px 16px;
+  overflow-x: auto;
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.xml-attr { color: #7ec8e3; }
+.xml-val { color: #ffd166; }
+.xml-tag { color: #b07aff; }
+.xml-comment { color: var(--text3); font-style: italic; }
+.xml-new { color: var(--green); }
+.xml-changed { background: rgba(255,209,102,0.1); border-radius: 2px; padding: 0 2px; }
+
+/* ── CHECKLIST ── */
+.checklist {
+  list-style: none;
+  margin: 12px 0 24px;
+}
+
+.checklist li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(30,45,69,0.6);
+  color: var(--text2);
+  font-size: 13px;
+}
+
+.checklist li:last-child { border-bottom: none; }
+
+.check-box {
+  width: 16px; height: 16px;
+  min-width: 16px;
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.check-box:hover { border-color: var(--accent); }
+.checklist li.checked .check-box { background: var(--green); border-color: var(--green); }
+.checklist li.checked .check-box::after { content: '✓'; font-size: 10px; color: #000; font-weight: 700; }
+.checklist li.checked .check-text { text-decoration: line-through; color: var(--text3); }
+
+.check-prio {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.prio-critical { background: rgba(255,90,110,0.15); color: var(--red); }
+.prio-high { background: rgba(255,209,102,0.15); color: var(--yellow); }
+.prio-medium { background: rgba(0,229,160,0.15); color: var(--green); }
+
+/* ── TIMELINE ── */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+  margin: 16px 0 24px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px; top: 8px; bottom: 8px;
+  width: 1px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.timeline-item:last-child { border-bottom: none; margin-bottom: 0; }
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 6px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  background: var(--text3);
+}
+
+.timeline-item.critical::before { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.timeline-item.important::before { background: var(--yellow); }
+.timeline-item.normal::before { background: var(--green); }
+
+.timeline-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+
+.timeline-item.critical .timeline-date { color: var(--red); }
+.timeline-item.important .timeline-date { color: var(--yellow); }
+
+.timeline-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.timeline-desc {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.timeline-env {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.env-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.env-hom { background: rgba(176,122,255,0.15); color: var(--purple); }
+.env-prod { background: rgba(255,90,110,0.15); color: var(--red); }
+
+/* ── RISK TABLE ── */
+.risk-high { color: var(--red); }
+.risk-med { color: var(--yellow); }
+.risk-low { color: var(--green); }
+
+.risk-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  display: inline-block;
+}
+.risk-badge.critical { background: rgba(255,90,110,0.15); color: var(--red); }
+.risk-badge.high { background: rgba(255,209,102,0.15); color: var(--yellow); }
+.risk-badge.medium { background: rgba(0,229,160,0.15); color: var(--green); }
+
+/* ── INFO CALLOUT ── */
+.callout {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.callout.warn { border-left-color: var(--yellow); background: rgba(255,209,102,0.04); }
+.callout.danger { border-left-color: var(--red); background: rgba(255,90,110,0.04); }
+.callout.success { border-left-color: var(--green); background: rgba(0,229,160,0.04); }
+.callout strong { color: var(--text); }
+
+/* ── IMPACT GRID ── */
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.impact-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.impact-card-icon { font-size: 20px; margin-bottom: 8px; }
+
+.impact-card-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.impact-card-desc {
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+/* ── DB CHANGES ── */
+.db-change {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.db-change-type {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.db-alter { background: rgba(255,209,102,0.15); color: var(--yellow); }
+.db-new { background: rgba(0,229,160,0.15); color: var(--green); }
+.db-critical { background: rgba(255,90,110,0.15); color: var(--red); }
+
+.db-change-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.db-change-text code { font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: rgba(0,198,255,0.08); padding: 1px 5px; border-radius: 3px; }
+
+/* ── FOOTER ── */
+.footer {
+  padding: 32px 60px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-left { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+.footer-right { font-size: 12px; color: var(--text3); }
+.footer-right a { color: var(--accent); text-decoration: none; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 260px; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 200;
+  transition: transform 0.1s;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ── PRINT BUTTON ── */
+.print-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--accent2);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.print-btn:hover { background: var(--accent); transform: translateY(-1px); }
+
+/* ── HIGHLIGHT PROGRESS COUNTER ── */
+.checklist-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 12px;
+}
+
+.checklist-counter span { color: var(--accent); }
+
+@media (max-width: 900px) {
+  #sidebar { display: none; }
+  main { margin-left: 0; }
+  .hero, .section, .footer, .alert-bar { padding-left: 24px; padding-right: 24px; }
+  .nt-grid, .xml-compare, .impact-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 28px; }
+  .hero-stats { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">◈ NF-e SEFAZ</div>
+    <div class="sidebar-title">Análise Técnica<br>Notas Técnicas 2026</div>
+    <div class="sidebar-date">Emitido em 06/06/2026</div>
+  </div>
+  <nav>
+    <div class="nav-section">Visão Geral</div>
+    <a class="nav-link" onclick="scrollTo('resumo')"><span class="nav-dot"></span>Resumo Executivo</a>
+    <a class="nav-link" onclick="scrollTo('visao')"><span class="nav-dot"></span>Visão Geral NTs</a>
+
+    <div class="nav-section">Notas Técnicas</div>
+    <a class="nav-link" onclick="scrollTo('nt001')"><span class="nav-dot" style="color:var(--purple)"></span>NT 2026.001 — PAA <span class="nav-badge badge-yellow">ALTO</span></a>
+    <a class="nav-link" onclick="scrollTo('nt002')"><span class="nav-dot" style="color:var(--red)"></span>NT 2026.002 — DANFE T2 <span class="nav-badge badge-red">CRÍTICO</span></a>
+    <a class="nav-link" onclick="scrollTo('nt003')"><span class="nav-dot" style="color:var(--orange)"></span>NT 2026.003 — Gráfico <span class="nav-badge badge-yellow">ALTO</span></a>
+    <a class="nav-link" onclick="scrollTo('nt004')"><span class="nav-dot" style="color:var(--green)"></span>NT 2026.004 — CNPJ Alfa <span class="nav-badge badge-yellow">ALTO</span></a>
+
+    <div class="nav-section">Consolidados</div>
+    <a class="nav-link" onclick="scrollTo('tags-novas')"><span class="nav-dot"></span>Novas Tags XML</a>
+    <a class="nav-link" onclick="scrollTo('tags-alt')"><span class="nav-dot"></span>Tags Alteradas</a>
+    <a class="nav-link" onclick="scrollTo('rv')"><span class="nav-dot"></span>Regras de Validação</a>
+    <a class="nav-link" onclick="scrollTo('xml-ex')"><span class="nav-dot"></span>Exemplos XML</a>
+
+    <div class="nav-section">Impactos</div>
+    <a class="nav-link" onclick="scrollTo('banco')"><span class="nav-dot"></span>Banco de Dados</a>
+    <a class="nav-link" onclick="scrollTo('erp')"><span class="nav-dot"></span>Integração ERP</a>
+    <a class="nav-link" onclick="scrollTo('sped')"><span class="nav-dot"></span>SPED / EFD</a>
+
+    <div class="nav-section">Ação</div>
+    <a class="nav-link" onclick="scrollTo('checklist-dev')"><span class="nav-dot"></span>Checklist Dev</a>
+    <a class="nav-link" onclick="scrollTo('checklist-fiscal')"><span class="nav-dot"></span>Checklist Fiscal</a>
+    <a class="nav-link" onclick="scrollTo('cronograma')"><span class="nav-dot"></span>Cronograma</a>
+    <a class="nav-link" onclick="scrollTo('riscos')"><span class="nav-dot"></span>Riscos</a>
+    <a class="nav-link" onclick="scrollTo('recomendacoes')"><span class="nav-dot"></span>Recomendações</a>
+  </nav>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-kicker">Análise Técnica Fiscal Sênior</div>
+  <h1>Notas Técnicas<br><span>NF-e / NFC-e 2026</span></h1>
+  <p class="hero-sub">Análise completa das 4 Notas Técnicas publicadas pela SEFAZ em 2026, com impactos em leiaute XML, regras de validação, banco de dados, ERP e SPED.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-n">4</div>
+      <div class="hero-stat-l">Notas Técnicas</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">7</div>
+      <div class="hero-stat-l">Novas Tags XML</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">9+</div>
+      <div class="hero-stat-l">Tags Alteradas</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">60+</div>
+      <div class="hero-stat-l">Novas/Alt. RVs</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">9 dias</div>
+      <div class="hero-stat-l">Próximo prazo</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALERT BAR -->
+<div class="alert-bar">
+  <span class="alert-icon">⚠</span>
+  <span><strong>URGENTE:</strong> Regra BA02-35 e W16-40 entram em <strong>produção em 15/06/2026</strong> — NF-e de saída que referencie NFC-e será <strong>rejeitada automaticamente</strong>. Revisite seus processos agora.</span>
+</div>
+
+<!-- RESUMO EXECUTIVO -->
+<section class="section" id="resumo">
+  <div class="section-label">Seção 01</div>
+  <h2><span class="h2-num">//</span> Resumo Executivo</h2>
+
+  <p>O ano de 2026 concentra <strong style="color:var(--text)">quatro Notas Técnicas</strong> com impactos significativos nos sistemas de emissão de NF-e e NFC-e, abrangendo três frentes estratégicas de modernização do sistema fiscal eletrônico brasileiro.</p>
+
+  <div class="callout danger">
+    <strong>⚠ Atenção para gestores:</strong> As NTs de 2026 exigem adaptações em sistemas emissores, ERPs integrados, validadores de schema XSD, bancos de dados e DANFEs. Os prazos são escalonados entre <strong>junho e outubro de 2026</strong>, com a maioria das regras críticas entrando em produção em <strong>03/08/2026</strong>. Empresas que não se adequarem estarão sujeitas a rejeições automáticas pela SEFAZ.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Frente</th><th>NTs</th><th>Impacto</th><th>Prazo Prod.</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--purple)">Novo modelo de autorização (PAA)</strong></td>
+          <td><span class="tag-mono">NT 2026.001</span></td>
+          <td>Novo grupo XML <span class="tag-mono">infPAA</span>, série 970–979, <span class="tag-mono">procEmi=4</span></td>
+          <td><span class="msg-code">03/08/2026</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--red)">DANFE Simplificado Tipo 2 + Alerta</strong></td>
+          <td><span class="tag-mono">NT 2026.002</span> <span class="tag-mono">NT 2026.003</span></td>
+          <td>MUITO ALTO — <span class="tag-mono">tpImp=6</span>, <span class="tag-mono">cStat=120</span>, +50 RVs</td>
+          <td><span class="msg-code" style="color:var(--red)">15/06/2026</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--green)">CNPJ Alfanumérico</strong></td>
+          <td><span class="tag-mono">NT 2026.004</span></td>
+          <td>Schema XSD: CNPJ numérico → alfanumérico em todos os campos</td>
+          <td><span class="msg-code">A definir</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- VISÃO GERAL -->
+<section class="section" id="visao">
+  <div class="section-label">Seção 02</div>
+  <h2><span class="h2-num">//</span> Visão Geral das NTs de 2026</h2>
+
+  <div class="nt-grid">
+    <div class="nt-card nt-001">
+      <div class="nt-number">NT 2026.001 · v1.00 · 22/04/2026</div>
+      <div class="nt-title">Provedor de Assinatura e Autorização — PAA</div>
+      <div class="nt-desc">Regulamenta o PAA para MEI, Produtor Rural e Simples Nacional. Novo grupo infPAA, assinatura RSA, série 970-979. Autorização exclusiva na SVRS.</div>
+      <div class="nt-meta">
+        <span class="nt-tag impact-high">ALTO</span>
+        <span class="nt-tag">Leiaute XML</span>
+        <span class="nt-tag">Segurança Digital</span>
+        <span class="nt-tag">SVRS</span>
+      </div>
+    </div>
+    <div class="nt-card nt-002">
+      <div class="nt-number">NT 2026.002 · v1.00 · 25/05/2026</div>
+      <div class="nt-title">DANFE Simplificado Tipo 2 + Autorização com Alerta</div>
+      <div class="nt-desc">Maior NT do ano. tpImp=6, tpEmis=9, cStat=120, vedação referência NFC-e em NF-e de saída, +50 regras de validação.</div>
+      <div class="nt-meta">
+        <span class="nt-tag impact-critical">CRÍTICO</span>
+        <span class="nt-tag">PDV/Varejo</span>
+        <span class="nt-tag">Alerta cStat=120</span>
+      </div>
+    </div>
+    <div class="nt-card nt-003">
+      <div class="nt-number">NT 2026.003 · v1.00 · 25/05/2026</div>
+      <div class="nt-title">DANFE Simplificado Tipo 2 — Especificação Gráfica</div>
+      <div class="nt-desc">Layout visual e de impressão térmica (80mm) do novo DANFE. Compatibilidade ESC/POS, QR Code versão 3 obrigatório.</div>
+      <div class="nt-meta">
+        <span class="nt-tag impact-high">ALTO</span>
+        <span class="nt-tag">Impressão</span>
+        <span class="nt-tag">QR Code v3</span>
+      </div>
+    </div>
+    <div class="nt-card nt-004">
+      <div class="nt-number">NT 2026.004 · v1.00 · 30/04/2026</div>
+      <div class="nt-title">Schema NF-e/NFC-e — CNPJ Alfanumérico</div>
+      <div class="nt-desc">Atualização do XSD para aceitar CNPJ com caracteres alfanuméricos. Impacta todos os campos CNPJ do leiaute e banco de dados.</div>
+      <div class="nt-meta">
+        <span class="nt-tag impact-high">ALTO</span>
+        <span class="nt-tag">Schema XSD</span>
+        <span class="nt-tag">Banco de Dados</span>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:var(--text3)"><strong style="color:var(--text2)">Base legal:</strong> Ajuste SINIEF 9/22 · Ajuste SINIEF 32/25 · Ajuste SINIEF 13/26 · Ajustes SINIEF 45/22, 55/22, 47/23, 46/25</p>
+</section>
+
+<!-- NT 2026.001 -->
+<section class="section" id="nt001">
+  <div class="section-label">Seção 03</div>
+  <h2><span class="h2-num">//</span> NT 2026.001 — Provedor de Assinatura e Autorização (PAA)</h2>
+
+  <p>Regulamenta tecnicamente o <strong style="color:var(--purple)">PAA (Provedor de Assinatura e Autorização de DFe)</strong>, permitindo que entidades habilitadas pelo ENCAT assinem e transmitam NF-e em nome do contribuinte (MEI, Produtor Rural, Simples Nacional), sem exigir certificado ICP-Brasil do emitente. A autorização ocorre exclusivamente na <strong style="color:var(--text)">SEFAZ Virtual RS (SVRS)</strong>.</p>
+
+  <h3>Novas Tags XML</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tag</th><th>ID</th><th>Pai</th><th>Tipo</th><th>Ocor.</th><th>Descrição</th></tr></thead>
+      <tbody>
+        <tr><td><span class="new-tag">infPAA</span></td><td class="tag-mono">ZG01</td><td class="tag-mono">A01</td><td>G</td><td>0-1</td><td>Grupo de Informações do PAA</td></tr>
+        <tr><td><span class="new-tag">CNPJPAA</span></td><td class="tag-mono">ZG02</td><td class="tag-mono">ZG01</td><td>C</td><td>1-1</td><td>CNPJ do Provedor de Assinatura e Autorização (14 chars)</td></tr>
+        <tr><td><span class="new-tag">PAASignature</span></td><td class="tag-mono">ZG03</td><td class="tag-mono">ZG01</td><td>G</td><td>1-1</td><td>Assinatura RSA do Emitente para DFe gerados por PAA</td></tr>
+        <tr><td><span class="new-tag">SignatureValue</span></td><td class="tag-mono">ZG04</td><td class="tag-mono">ZG03</td><td>C</td><td>1-1</td><td>Assinatura digital RSA SHA1 base64 do atributo Id</td></tr>
+        <tr><td><span class="new-tag">RSAKeyValue</span></td><td class="tag-mono">ZG05</td><td class="tag-mono">ZG03</td><td>G</td><td>1-1</td><td>Chave pública no padrão XML RSA Key</td></tr>
+        <tr><td><span class="new-tag">Modulus</span></td><td class="tag-mono">ZG06</td><td class="tag-mono">ZG05</td><td>C</td><td>1-1</td><td>Módulo da chave pública RSA</td></tr>
+        <tr><td><span class="new-tag">Exponent</span></td><td class="tag-mono">ZG07</td><td class="tag-mono">ZG05</td><td>C</td><td>1-1</td><td>Expoente RSA (fixo: "AQAB")</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Tags Alteradas</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tag</th><th>ID</th><th>Alteração</th><th>Antes</th><th>Depois</th></tr></thead>
+      <tbody>
+        <tr><td><span class="changed-tag">serie</span></td><td class="tag-mono">B07</td><td>Nova faixa de domínio</td><td>Até 920-969 (CPF)</td><td>+ faixa <strong style="color:var(--yellow)">970–979</strong> exclusiva PAA</td></tr>
+        <tr><td><span class="changed-tag">procEmi</span></td><td class="tag-mono">B26</td><td>Novo valor</td><td>0, 1, 2, 3</td><td>+ <strong style="color:var(--yellow)">4</strong> = Emissão por PAA</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Regras de Validação</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Código</th><th>Modelo</th><th>Condição</th><th>Msg</th><th>Efeito</th></tr></thead>
+      <tbody>
+        <tr><td class="tag-mono">B26-10</td><td>55/65</td><td>Série 970-979 sem procEmi=4 (ou vice-versa)</td><td><span class="msg-code">244</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">B26-20</td><td>55/65</td><td>Série incompatível com procEmi (SVRS)</td><td><span class="msg-code">451</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">C21-20</td><td>55/65</td><td>CRT=2 ou 3 usando PAA (exceto produtor rural)</td><td><span class="msg-code">1178</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">ZG01-10</td><td>55/65</td><td>infPAA informado fora da SVRS</td><td><span class="msg-code">1179</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">ZG02-10</td><td>55/65</td><td>CNPJ do PAA inválido (dígito verificador)</td><td><span class="msg-code">1180</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">ZG02-20</td><td>55/65</td><td>CNPJ do PAA não consta na base ENCAT</td><td><span class="msg-code">1181</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">ZG02-30</td><td>55/65</td><td>Emitente sem vínculo ativo com o PAA</td><td><span class="msg-code">1182</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">ZG02-40</td><td>55/65</td><td>Certificado de assinatura ≠ CNPJ do PAA</td><td><span class="msg-code">1183</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">ZG04-10</td><td>55/65</td><td>Assinatura RSA inválida (SignatureValue)</td><td><span class="msg-code">1184</span></td><td><span class="rej">Rejeição</span></td></tr>
+        <tr><td class="tag-mono">F03 / F03A</td><td>55</td><td>Exceção: grupo infPAA preenchido isenta validação CNPJ/CPF emitente</td><td>—</td><td><span class="exc">Exceção</span></td></tr>
+        <tr><td class="tag-mono">P09-10</td><td>—</td><td>DFe emitido com PAA deve usar ambiente SVRS</td><td><span class="msg-code">252</span></td><td><span class="rej">Rejeição</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- NT 2026.002 -->
+<section class="section" id="nt002">
+  <div class="section-label">Seção 04</div>
+  <h2><span class="h2-num">//</span> NT 2026.002 — DANFE Simplificado Tipo 2 + Alerta</h2>
+
+  <div class="callout danger">
+    <strong>MAIOR IMPACTO DE 2026.</strong> Esta NT implementa o DANFE Simplificado Tipo 2 (tpImp=6) para NF-e mod 55, o novo mecanismo de autorização com alerta (cStat=120), a contingência off-line (tpEmis=9) e a <strong>vedação de NF-e de saída referenciar NFC-e</strong> — esta última já em produção em <strong>15/06/2026</strong>.
+  </div>
+
+  <h3>Inovações Principais</h3>
+  <div class="impact-grid">
+    <div class="impact-card">
+      <div class="impact-card-icon">🖨</div>
+      <div class="impact-card-title">DANFE Simplificado Tipo 2</div>
+      <div class="impact-card-desc">NF-e mod. 55 com tpImp=6 pode substituir NFC-e em operações de varejo. Layout térmico 80mm.</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-card-icon">⚡</div>
+      <div class="impact-card-title">cStat=120 — Alerta</div>
+      <div class="impact-card-desc">Novo código de retorno: nota autorizada porém com alertas. Até 5 alertas por NF-e via cMsg/xMsg.</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-card-icon">🚫</div>
+      <div class="impact-card-title">Vedação Ref. NFC-e</div>
+      <div class="impact-card-desc">NF-e de saída não pode mais referenciar NFC-e (mod 65) ou CF-e (mod 59), exceto complementar.</div>
+    </div>
+  </div>
+
+  <h3>Tags Alteradas</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tag</th><th>ID</th><th>Alteração</th><th>Novo Valor</th></tr></thead>
+      <tbody>
+        <tr><td><span class="changed-tag">tpImp</span></td><td class="tag-mono">B21</td><td>Novo domínio</td><td><strong style="color:var(--yellow)">6</strong> = DANFE Simplificado Tipo 2 (Ajuste SINIEF 13/26)</td></tr>
+        <tr><td><span class="changed-tag">tpEmis</span></td><td class="tag-mono">B22</td><td>Novo domínio</td><td><strong style="color:var(--yellow)">9</strong> = Contingência off-line da NFC-e e NF-e com DANFE Simplificado Tipo 2</td></tr>
+        <tr><td><span class="changed-tag">indPres</span></td><td class="tag-mono">B25b</td><td>Redesignação do valor 4</td><td><strong style="color:var(--yellow)">4</strong> = Operações não presenciais com NFC-e e NF-e com DANFE Tipo 2 (com entrega)</td></tr>
+        <tr><td><span class="changed-tag">cStat</span></td><td class="tag-mono">PR11</td><td>Novo valor protocolo</td><td><strong style="color:var(--yellow)">120</strong> = Autorizado o uso da NF-e, com alerta</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Regras de Validação — Seleção Principal</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Código</th><th>Mod.</th><th>Condição</th><th>Msg</th><th>Efeito</th><th>Produção</th></tr></thead>
+      <tbody>
+        <tr><td class="tag-mono" style="color:var(--red)">BA02-35</td><td>55</td><td>NF-e saída referenciando NFC-e (mod 65) ou CF-e (mod 59)</td><td><span class="msg-code">679</span></td><td><span class="rej">Rejeição</span></td><td style="color:var(--red);font-size:11px;font-family:var(--font-mono)">15/06/2026</td></tr>
+        <tr><td class="tag-mono">B09-40</td><td>55/65</td><td>NFC-e ou NF-e tpImp=6 com emissão atrasada >5 min</td><td><span class="msg-code">704</span></td><td><span class="rej">Rejeição</span></td><td style="font-size:11px;font-family:var(--font-mono)">15/06/2026</td></tr>
+        <tr><td class="tag-mono">B11-10</td><td>55/65</td><td>NF-e tpImp=6 com operação de entrada (tpNF=0)</td><td><span class="msg-code">706</span></td><td><span class="rej">Rejeição</span></td><td style="font-size:11px;font-family:var(--font-mono)">15/06/2026</td></tr>
+        <tr><td class="tag-mono">B11A-10</td><td>55/65</td><td>NF-e tpImp=6 com operação interestadual</td><td><span class="msg-code">707</span></td><td><span class="rej">Rejeição</span></td><td style="font-size:11px;font-family:var(--font-mono)">15/06/2026</td></tr>
+        <tr><td class="tag-mono">B22-10</td><td>55</td><td>NF-e com tpEmis=9 e tpImp≠6</td><td><span class="msg-code">711</span></td><td><span class="rej">Rejeição</span></td><td style="font-size:11px;font-family:var(--font-mono)">03/08/2026</td></tr>
+        <tr><td class="tag-mono">I08-150</td><td>55/65</td><td>NF-e tpImp=6 com CFOP fora da lista restrita</td><td><span class="msg-code">725</span></td><td><span class="rej">Rejeição</span></td><td style="font-size:11px;font-family:var(--font-mono)">03/08/2026</td></tr>
+        <tr><td class="tag-mono">W16-40</td><td>55/65</td><td>NFC-e/tpImp=6 >R$10.000 sem destinatário identificado</td><td><span class="msg-code">750</span></td><td><span class="rej">Rejeição</span></td><td style="color:var(--red);font-size:11px;font-family:var(--font-mono)">15/06/2026</td></tr>
+        <tr><td class="tag-mono">ZX02-220</td><td>55</td><td>NF-e tpImp=6 com QR Code versão ≠ 3</td><td><span class="msg-code">672</span></td><td><span class="rej">Rejeição</span></td><td style="font-size:11px;font-family:var(--font-mono)">03/08/2026</td></tr>
+        <tr><td class="tag-mono" style="color:var(--yellow)">I08-180</td><td>55</td><td>NF-e CFOP 5.929/6.929 referenciando NFC-e</td><td><span class="msg-code">375</span></td><td><span class="rej">Rejeição</span></td><td style="font-size:11px;font-family:var(--font-mono)">05/10/2026</td></tr>
+        <tr><td class="tag-mono" style="color:var(--yellow)">5E17-65</td><td>65</td><td>Destinatário com CNPJ bloqueado/vedado no CCC</td><td><span class="msg-code">172</span></td><td><span class="alrt">ALERTA</span></td><td style="font-size:11px;font-family:var(--font-mono)">05/10/2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- NT 2026.003 + 2026.004 -->
+<section class="section" id="nt003">
+  <div class="section-label">Seção 05 e 06</div>
+  <h2><span class="h2-num">//</span> NT 2026.003 e NT 2026.004</h2>
+
+  <h3>NT 2026.003 — DANFE Simplificado Tipo 2 (Especificação Gráfica)</h3>
+  <p>Define o leiaute visual e de impressão do DANFE Simplificado Tipo 2 para NF-e com <span class="tag-mono">tpImp=6</span>.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Especificação</th><th>Detalhe</th></tr></thead>
+      <tbody>
+        <tr><td>Largura de impressão</td><td>80mm (formato cupom fiscal)</td></tr>
+        <tr><td>Tipo de impressora</td><td>Térmica — compatível ESC/POS</td></tr>
+        <tr><td>QR Code</td><td>Versão 3 — obrigatório</td></tr>
+        <tr><td>Campos obrigatórios</td><td>Chave de acesso, dados emitente, itens, totais, forma de pagamento</td></tr>
+        <tr><td>Ambiente de homologação</td><td>01/07/2026</td></tr>
+        <tr><td>Produção</td><td>03/08/2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="nt004"></div>
+  <h3>NT 2026.004 — CNPJ Alfanumérico</h3>
+  <p>Atualização do schema XSD para aceitar CNPJ com caracteres alfanuméricos em conformidade com a regulamentação da Receita Federal. Todos os campos de CNPJ no leiaute têm o tipo alterado de numérico para alfanumérico.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tag</th><th>ID</th><th>Grupo</th><th>Alteração</th></tr></thead>
+      <tbody>
+        <tr><td><span class="changed-tag">CNPJ (emitente)</span></td><td class="tag-mono">C02</td><td>C. Emitente</td><td>Tipo <span class="msg-code">N</span> → <span class="msg-code" style="color:var(--green)">C</span> (alfanumérico)</td></tr>
+        <tr><td><span class="changed-tag">CNPJ (destinatário)</span></td><td class="tag-mono">E02</td><td>E. Destinatário</td><td>Tipo N → C</td></tr>
+        <tr><td><span class="changed-tag">CNPJ (transportadora)</span></td><td class="tag-mono">X04</td><td>X. Transporte</td><td>Tipo N → C</td></tr>
+        <tr><td><span class="changed-tag">CNPJ (intermediador)</span></td><td class="tag-mono">Z14a</td><td>Intermediador</td><td>Tipo N → C</td></tr>
+        <tr><td><span class="changed-tag">CNPJFab</span></td><td class="tag-mono">I05e</td><td>I. Produtos</td><td>Tipo N → C</td></tr>
+        <tr><td><span class="changed-tag">CNPJPAA</span></td><td class="tag-mono">ZG02</td><td>ZG. PAA</td><td>Tipo N → C</td></tr>
+        <tr><td><span class="changed-tag">Demais campos CNPJ</span></td><td>—</td><td>Todos os grupos</td><td>Tipo N → C</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- EXEMPLOS XML -->
+<section class="section" id="xml-ex">
+  <div class="section-label">Seção 11</div>
+  <h2><span class="h2-num">//</span> Exemplos XML — Antes e Depois</h2>
+
+  <h3>NT 2026.001 — Emissão via PAA</h3>
+  <div class="xml-compare">
+    <div class="xml-block xml-before">
+      <div class="xml-block-header">◈ ANTES (emissão tradicional)</div>
+      <pre><span class="xml-tag">&lt;ide&gt;</span>
+  <span class="xml-tag">&lt;serie&gt;</span><span class="xml-val">001</span><span class="xml-tag">&lt;/serie&gt;</span>
+  <span class="xml-tag">&lt;procEmi&gt;</span><span class="xml-val">0</span><span class="xml-tag">&lt;/procEmi&gt;</span>
+  ...
+<span class="xml-tag">&lt;/ide&gt;</span>
+<span class="xml-comment">&lt;!-- Sem grupo infPAA --&gt;</span></pre>
+    </div>
+    <div class="xml-block xml-after">
+      <div class="xml-block-header">✓ DEPOIS (emissão via PAA)</div>
+      <pre><span class="xml-tag">&lt;ide&gt;</span>
+  <span class="xml-new">&lt;serie&gt;<span class="xml-val">971</span>&lt;/serie&gt;</span> <span class="xml-comment">&lt;!-- PAA: 970-979 --&gt;</span>
+  <span class="xml-new">&lt;procEmi&gt;<span class="xml-val">4</span>&lt;/procEmi&gt;</span> <span class="xml-comment">&lt;!-- 4=PAA --&gt;</span>
+  ...
+<span class="xml-tag">&lt;/ide&gt;</span>
+<span class="xml-comment">&lt;!-- Novo grupo ZG --&gt;</span>
+<span class="xml-new"><span class="xml-tag">&lt;infPAA&gt;</span>
+  <span class="xml-tag">&lt;CNPJPAA&gt;</span><span class="xml-val">12345678000195</span><span class="xml-tag">&lt;/CNPJPAA&gt;</span>
+  <span class="xml-tag">&lt;PAASignature&gt;</span>
+    <span class="xml-tag">&lt;SignatureValue&gt;</span><span class="xml-val">SGVs...</span><span class="xml-tag">&lt;/SignatureValue&gt;</span>
+    <span class="xml-tag">&lt;RSAKeyValue&gt;</span>
+      <span class="xml-tag">&lt;Modulus&gt;</span><span class="xml-val">xJYv3zN8...</span><span class="xml-tag">&lt;/Modulus&gt;</span>
+      <span class="xml-tag">&lt;Exponent&gt;</span><span class="xml-val">AQAB</span><span class="xml-tag">&lt;/Exponent&gt;</span>
+    <span class="xml-tag">&lt;/RSAKeyValue&gt;</span>
+  <span class="xml-tag">&lt;/PAASignature&gt;</span>
+<span class="xml-tag">&lt;/infPAA&gt;</span></span></pre>
+    </div>
+  </div>
+
+  <h3>NT 2026.002 — tpImp=6 e cStat=120</h3>
+  <div class="xml-compare">
+    <div class="xml-block xml-before">
+      <div class="xml-block-header">◈ ANTES (NFC-e convencional)</div>
+      <pre><span class="xml-tag">&lt;ide&gt;</span>
+  <span class="xml-tag">&lt;mod&gt;</span><span class="xml-val">65</span><span class="xml-tag">&lt;/mod&gt;</span>
+  <span class="xml-tag">&lt;tpImp&gt;</span><span class="xml-val">4</span><span class="xml-tag">&lt;/tpImp&gt;</span> <span class="xml-comment">&lt;!-- DANFE NFC-e --&gt;</span>
+  <span class="xml-tag">&lt;tpEmis&gt;</span><span class="xml-val">1</span><span class="xml-tag">&lt;/tpEmis&gt;</span> <span class="xml-comment">&lt;!-- Normal --&gt;</span>
+  <span class="xml-tag">&lt;indPres&gt;</span><span class="xml-val">1</span><span class="xml-tag">&lt;/indPres&gt;</span>
+<span class="xml-tag">&lt;/ide&gt;</span>
+
+<span class="xml-comment">&lt;!-- Retorno normal --&gt;</span>
+<span class="xml-tag">&lt;cStat&gt;</span><span class="xml-val">100</span><span class="xml-tag">&lt;/cStat&gt;</span>
+<span class="xml-tag">&lt;xMotivo&gt;</span>Autorizado o uso<span class="xml-tag">&lt;/xMotivo&gt;</span></pre>
+    </div>
+    <div class="xml-block xml-after">
+      <div class="xml-block-header">✓ DEPOIS (NF-e com DANFE Tipo 2)</div>
+      <pre><span class="xml-tag">&lt;ide&gt;</span>
+  <span class="xml-new">&lt;mod&gt;<span class="xml-val">55</span>&lt;/mod&gt;</span> <span class="xml-comment">&lt;!-- NF-e! --&gt;</span>
+  <span class="xml-new">&lt;tpImp&gt;<span class="xml-val">6</span>&lt;/tpImp&gt;</span> <span class="xml-comment">&lt;!-- Tipo 2 --&gt;</span>
+  <span class="xml-new">&lt;tpEmis&gt;<span class="xml-val">1</span>&lt;/tpEmis&gt;</span> <span class="xml-comment">&lt;!-- ou 9=off-line --&gt;</span>
+  <span class="xml-new">&lt;indPres&gt;<span class="xml-val">1</span>&lt;/indPres&gt;</span>
+<span class="xml-tag">&lt;/ide&gt;</span>
+
+<span class="xml-comment">&lt;!-- Retorno com ALERTA --&gt;</span>
+<span class="xml-new"><span class="xml-tag">&lt;cStat&gt;</span><span class="xml-val">120</span><span class="xml-tag">&lt;/cStat&gt;</span>
+<span class="xml-tag">&lt;xMotivo&gt;</span>Autorizado, com alerta<span class="xml-tag">&lt;/xMotivo&gt;</span>
+<span class="xml-tag">&lt;cMsg&gt;</span><span class="xml-val">172</span><span class="xml-tag">&lt;/cMsg&gt;</span>
+<span class="xml-tag">&lt;xMsg&gt;</span>CNPJ destino inabilitado<span class="xml-tag">&lt;/xMsg&gt;</span></span></pre>
+    </div>
+  </div>
+
+  <h3>NT 2026.004 — CNPJ Alfanumérico</h3>
+  <div class="xml-compare">
+    <div class="xml-block xml-before">
+      <div class="xml-block-header">◈ ANTES (CNPJ somente numérico)</div>
+      <pre><span class="xml-tag">&lt;emit&gt;</span>
+  <span class="xml-tag">&lt;CNPJ&gt;</span><span class="xml-val">12345678000195</span><span class="xml-tag">&lt;/CNPJ&gt;</span>
+  <span class="xml-comment">&lt;!-- Apenas 0-9 --&gt;</span>
+<span class="xml-tag">&lt;/emit&gt;</span></pre>
+    </div>
+    <div class="xml-block xml-after">
+      <div class="xml-block-header">✓ DEPOIS (CNPJ alfanumérico)</div>
+      <pre><span class="xml-tag">&lt;emit&gt;</span>
+  <span class="xml-new"><span class="xml-tag">&lt;CNPJ&gt;</span><span class="xml-val">12ABC678000195</span><span class="xml-tag">&lt;/CNPJ&gt;</span></span>
+  <span class="xml-comment">&lt;!-- Aceita [A-Z0-9] --&gt;</span>
+<span class="xml-tag">&lt;/emit&gt;</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- BANCO DE DADOS -->
+<section class="section" id="banco">
+  <div class="section-label">Seção 12</div>
+  <h2><span class="h2-num">//</span> Impactos em Banco de Dados</h2>
+
+  <h3>NT 2026.001 — PAA</h3>
+  <div class="db-change"><span class="db-change-type db-new">NOVA COLUNA</span><div class="db-change-text">Campo <code>pro_emissao</code> — adicionar domínio <code>4=PAA</code></div></div>
+  <div class="db-change"><span class="db-change-type db-alter">ALTERAR</span><div class="db-change-text">Tabela de série: permitir faixas <code>970-979</code></div></div>
+  <div class="db-change"><span class="db-change-type db-new">NOVA TABELA</span><div class="db-change-text">Criar tabela <code>PAA_INFORMACOES</code> com campos: <code>CNPJPAA</code>, <code>SignatureValue</code>, <code>Modulus</code>, <code>Exponent</code></div></div>
+  <div class="db-change"><span class="db-change-type db-new">NOVA TABELA</span><div class="db-change-text">Criar tabela <code>PAA_VINCULOS</code> para controlar vínculos emitente ↔ PAA</div></div>
+
+  <h3>NT 2026.002 — DANFE Tipo 2 / Alerta</h3>
+  <div class="db-change"><span class="db-change-type db-critical">CRÍTICO</span><div class="db-change-text">Campo <code>tp_impressao</code>: adicionar domínio <code>6=DANFE Simplificado Tipo 2</code></div></div>
+  <div class="db-change"><span class="db-change-type db-critical">CRÍTICO</span><div class="db-change-text">Campo <code>tp_emissao</code>: adicionar domínio <code>9=Contingência off-line</code></div></div>
+  <div class="db-change"><span class="db-change-type db-alter">ALTERAR</span><div class="db-change-text">Campo <code>c_stat</code> do protocolo: tratamento específico para <code>cStat=120</code></div></div>
+  <div class="db-change"><span class="db-change-type db-new">NOVA TABELA</span><div class="db-change-text">Criar tabela <code>NF_ALERTAS</code>: armazenar <code>cMsg</code> e <code>xMsg</code> (até 5 por NF-e)</div></div>
+
+  <h3>NT 2026.004 — CNPJ Alfanumérico</h3>
+  <div class="db-change"><span class="db-change-type db-critical">CRÍTICO</span><div class="db-change-text">Todas as colunas <code>CNPJ</code> em todas as tabelas: alterar de <code>BIGINT</code> / <code>CHAR(14) numérico</code> para <code>VARCHAR(14)</code> ou <code>CHAR(14)</code> com collation que aceite letras</div></div>
+  <div class="db-change"><span class="db-change-type db-critical">CRÍTICO</span><div class="db-change-text">Índices sobre CNPJ: recriar como índices de texto/string</div></div>
+  <div class="db-change"><span class="db-change-type db-alter">ALTERAR</span><div class="db-change-text">Procedures de validação de CNPJ: aceitar caracteres <code>[A-Z0-9]</code></div></div>
+  <div class="db-change"><span class="db-change-type db-alter">ALTERAR</span><div class="db-change-text">Funções de cálculo de dígito verificador: adaptar para CNPJ alfanumérico</div></div>
+</section>
+
+<!-- ERP -->
+<section class="section" id="erp">
+  <div class="section-label">Seção 13</div>
+  <h2><span class="h2-num">//</span> Impactos em Integração ERP</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>NT</th><th>Módulo</th><th>Adaptação Necessária</th><th>Prioridade</th></tr></thead>
+      <tbody>
+        <tr><td>2026.001</td><td>Emissão NF-e</td><td>Lógica de identificação emissão PAA vs. própria; integração SVRS; RSA SHA1</td><td><span class="risk-badge high">Alta</span></td></tr>
+        <tr><td>2026.002</td><td>PDV / Frente de caixa</td><td>Lógica de quando usar tpImp=6 vs. 3 vs. 4; novo template DANFE 80mm</td><td><span class="risk-badge critical">Crítica</span></td></tr>
+        <tr><td>2026.002</td><td>Retorno SEFAZ</td><td>Processar cStat=120 como autorização; exibir alertas ao operador sem bloquear</td><td><span class="risk-badge critical">Crítica</span></td></tr>
+        <tr><td>2026.002</td><td>Contingência</td><td>Implementar tpEmis=9 com controle de posterior transmissão off-line</td><td><span class="risk-badge high">Alta</span></td></tr>
+        <tr><td>2026.002</td><td>NF-e saída</td><td>Bloquear referência a NFC-e (exceto NF-e complementar)</td><td><span class="risk-badge critical">Crítica</span></td></tr>
+        <tr><td>2026.004</td><td>Cadastro</td><td>Campos de CNPJ aceitarem [A-Z0-9]; validadores B2B e EDI atualizados</td><td><span class="risk-badge high">Alta</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SPED -->
+<section class="section" id="sped">
+  <div class="section-label">Seção 14</div>
+  <h2><span class="h2-num">//</span> Impactos SPED / EFD</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>SPED</th><th>Nível</th><th>Detalhes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>EFD ICMS/IPI</strong></td><td><span class="risk-badge high">Médio</span></td><td>DANFE Tipo 2 gera registros normais; registrar mod=55 nas operações de varejo substituídas</td></tr>
+        <tr><td><strong>EFD Contribuições</strong></td><td><span class="risk-badge medium">Baixo</span></td><td>Sem alteração PIS/COFINS; atentar para operações de varejo antes em NFC-e</td></tr>
+        <tr><td><strong>ECD</strong></td><td><span class="risk-badge medium">Baixo</span></td><td>CNPJ alfanumérico pode impactar integração contábil</td></tr>
+        <tr><td><strong>ECF</strong></td><td><span class="risk-badge medium">Baixo</span></td><td>Sem impacto direto</td></tr>
+        <tr><td><strong>SPED NF-e (DANFE)</strong></td><td><span class="risk-badge high">Alto</span></td><td>Geração do DANFE Tipo 2 para reprocessamentos e consultas fiscais</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- CHECKLIST DEV -->
+<section class="section" id="checklist-dev">
+  <div class="section-label">Seção 15</div>
+  <h2><span class="h2-num">//</span> Checklist — Equipe de Desenvolvimento</h2>
+
+  <div class="checklist-counter">Itens concluídos: <span id="devCount">0</span> / <span id="devTotal">0</span></div>
+
+  <h3>NT 2026.001 — PAA</h3>
+  <ul class="checklist" id="cl-dev-001">
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar novo grupo XML infPAA (ZG01–ZG07) no schema XSD</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar geração de assinatura RSA SHA1 do atributo Id da NF-e</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Adicionar novo valor procEmi=4 no domínio do campo B26</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Adicionar faixa de série 970–979 no controle de série</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Criar interface de vínculo com portal SVRS para obtenção de chaves RSA</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar todas as 9 novas regras de rejeição (ZG01-10 a ZG04-10, C21-20)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Adicionar exceções nas RVs F03 e F03A para emissão com PAA</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Testar em homologação SVRS até 08/06/2026</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+  </ul>
+
+  <h3>NT 2026.002 — DANFE Tipo 2 / Alerta</h3>
+  <ul class="checklist" id="cl-dev-002">
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Adicionar tpImp=6 no domínio do campo B21</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Adicionar tpEmis=9 no domínio do campo B22</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar tratamento do novo cStat=120 no processamento de retorno</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar armazenamento e exibição dos alertas (cMsg/xMsg, até 5 por NF-e)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar regra BA02-35 — bloquear referência a NFC-e/CF-e em NF-e de saída</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar todas as regras de validação para NF-e com tpImp=6 (50+ RVs)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Verificar regra W16-40 — limite por UF para destinatário não identificado</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar regra de alerta 5E17-65 (CNPJ destinatário bloqueado)</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar QR Code versão 3 obrigatório para NF-e tpImp=6</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Criar layout de impressão DANFE Simplificado Tipo 2 (80mm, térmico)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Implementar fluxo de contingência off-line tpEmis=9</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Testar em homologação etapa 1 até 01/06/2026 (W16-40)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Testar em homologação etapa 2 até 01/07/2026 (tpImp=6 e regras)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Testar em homologação etapa 3 até 01/09/2026 (alertas, I08-180, I08-186)</span><span class="check-prio prio-high">ALTO</span></li>
+  </ul>
+
+  <h3>NT 2026.004 — CNPJ Alfanumérico</h3>
+  <ul class="checklist" id="cl-dev-004">
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Atualizar schema XSD para aceitar CNPJ alfanumérico</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Alterar tipo de dados de CNPJ em banco de dados (BIGINT/CHAR → VARCHAR)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Atualizar funções de validação de CNPJ para aceitar [A-Z0-9]</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Atualizar todos os campos de entrada de CNPJ nas interfaces</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Atualizar integrações B2B e EDI para aceitar CNPJ alfanumérico</span><span class="check-prio prio-high">ALTO</span></li>
+  </ul>
+</section>
+
+<!-- CHECKLIST FISCAL -->
+<section class="section" id="checklist-fiscal">
+  <div class="section-label">Seção 16</div>
+  <h2><span class="h2-num">//</span> Checklist — Equipe Fiscal</h2>
+
+  <div class="checklist-counter">Itens concluídos: <span id="fiscalCount">0</span> / <span id="fiscalTotal">0</span></div>
+
+  <h3>NT 2026.001 — PAA</h3>
+  <ul class="checklist" id="cl-fiscal-001">
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Avaliar se a empresa tem perfil elegível para uso do PAA (MEI, Produtor Rural, Simples Nacional)</span><span class="check-prio prio-medium">MÉDIO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Se elegível: iniciar processo de vínculo com PAA homologado pelo ENCAT</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Verificar impacto na série de emissão e nos DANFEs arquivados</span><span class="check-prio prio-medium">MÉDIO</span></li>
+  </ul>
+
+  <h3>NT 2026.002 — DANFE Tipo 2</h3>
+  <ul class="checklist" id="cl-fiscal-002">
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Mapear operações de varejo que serão migradas de NFC-e para NF-e com tpImp=6</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Revisar controles internos de NF-e complementar que referenciam NFC-e</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Verificar CFOPs utilizados em NFC-e — garantir que são aceitos na lista restrita para tpImp=6</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Treinar equipe fiscal e operadores de PDV para o novo modelo de alerta (cStat=120)</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Verificar se a UF definiu limite diferente de R$10.000 para destinatário sem identificação (W16-40)</span><span class="check-prio prio-critical">CRÍTICO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Revisar procedimentos de contingência (tpEmis=9 para off-line)</span><span class="check-prio prio-medium">MÉDIO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Atualizar procedimentos de arquivo e guarda do DANFE para incluir o Tipo 2 (5 anos)</span><span class="check-prio prio-high">ALTO</span></li>
+  </ul>
+
+  <h3>NT 2026.004 — CNPJ Alfanumérico</h3>
+  <ul class="checklist" id="cl-fiscal-004">
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Identificar fornecedores e clientes que já possuam CNPJ alfanumérico</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Orientar área de cadastro sobre novos formatos de CNPJ</span><span class="check-prio prio-high">ALTO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Verificar impacto em cruzamentos SPED com CNPJ alfanumérico</span><span class="check-prio prio-medium">MÉDIO</span></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><span class="check-text">Comunicar parceiros de negócio sobre a mudança no CNPJ</span><span class="check-prio prio-medium">MÉDIO</span></li>
+  </ul>
+</section>
+
+<!-- CRONOGRAMA -->
+<section class="section" id="cronograma">
+  <div class="section-label">Seção 17</div>
+  <h2><span class="h2-num">//</span> Cronograma Consolidado de Implantação 2026</h2>
+
+  <div class="timeline">
+    <div class="timeline-item critical">
+      <div class="timeline-date">01/06/2026 — HOJE + 9 dias</div>
+      <div class="timeline-title">NT 2026.002 — Regra W16-40 (Limite destinatário)</div>
+      <div class="timeline-desc">Regra do limite de valor para NFC-e sem destinatário identificado (parametrizável por UF)</div>
+      <div class="timeline-env"><span class="env-badge env-hom">Homologação</span></div>
+    </div>
+    <div class="timeline-item critical">
+      <div class="timeline-date">08/06/2026</div>
+      <div class="timeline-title">NT 2026.001 — PAA em Homologação</div>
+      <div class="timeline-desc">Provedor de Assinatura e Autorização disponível para testes na SVRS</div>
+      <div class="timeline-env"><span class="env-badge env-hom">Homologação SVRS</span></div>
+    </div>
+    <div class="timeline-item critical">
+      <div class="timeline-date">15/06/2026 — ⚠ PRODUÇÃO</div>
+      <div class="timeline-title">NT 2026.002 — W16-40 + BA02-35 em PRODUÇÃO</div>
+      <div class="timeline-desc">Limite destinatário NFC-e e vedação de NF-e referenciar NFC-e entram em vigor</div>
+      <div class="timeline-env"><span class="env-badge env-prod">🚨 Produção</span></div>
+    </div>
+    <div class="timeline-item important">
+      <div class="timeline-date">01/07/2026</div>
+      <div class="timeline-title">NT 2026.002 e 2026.003 — DANFE Tipo 2 em Homologação</div>
+      <div class="timeline-desc">tpImp=6, tpEmis=9, 50+ regras de validação, layout gráfico</div>
+      <div class="timeline-env"><span class="env-badge env-hom">Homologação</span></div>
+    </div>
+    <div class="timeline-item important">
+      <div class="timeline-date">03/08/2026 — PRODUÇÃO</div>
+      <div class="timeline-title">NT 2026.001 e 2026.002/003 — Entrada em Produção</div>
+      <div class="timeline-desc">PAA, DANFE Simplificado Tipo 2 e todas as regras associadas entram em produção</div>
+      <div class="timeline-env"><span class="env-badge env-prod">Produção</span></div>
+    </div>
+    <div class="timeline-item normal">
+      <div class="timeline-date">01/09/2026</div>
+      <div class="timeline-title">NT 2026.002 — Alertas + I08-180 + I08-186 em Homologação</div>
+      <div class="timeline-desc">cStat=120 (alerta), NF-e CFOP 5.929 referenciando NFC-e, ECF referenciado</div>
+      <div class="timeline-env"><span class="env-badge env-hom">Homologação</span></div>
+    </div>
+    <div class="timeline-item normal">
+      <div class="timeline-date">05/10/2026 — PRODUÇÃO</div>
+      <div class="timeline-title">NT 2026.002 — Alertas em Produção</div>
+      <div class="timeline-desc">Mecanismo de alerta (cStat=120), I08-180 e I08-186 entram em produção</div>
+      <div class="timeline-env"><span class="env-badge env-prod">Produção</span></div>
+    </div>
+    <div class="timeline-item normal">
+      <div class="timeline-date">A definir (2026)</div>
+      <div class="timeline-title">NT 2026.004 — CNPJ Alfanumérico</div>
+      <div class="timeline-desc">Schema XSD para CNPJ alfanumérico — datas a publicar</div>
+      <div class="timeline-env"><span class="env-badge env-hom">Homologação</span><span class="env-badge env-prod">Produção</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RISCOS -->
+<section class="section" id="riscos">
+  <div class="section-label">Seção 18</div>
+  <h2><span class="h2-num">//</span> Riscos de Não Conformidade</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Risco</th><th>NT</th><th>Impacto</th><th>Prob.</th><th>Data Limite</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tag-mono">R01</td>
+          <td>NF-e de saída referenciando NFC-e sem ser complementar — rejeição BA02-35</td>
+          <td class="tag-mono">2026.002</td>
+          <td><span class="risk-badge critical">Rejeição Auto.</span></td>
+          <td><span class="risk-high">Alta</span></td>
+          <td style="color:var(--red);font-family:var(--font-mono);font-size:11px">15/06/2026</td>
+        </tr>
+        <tr>
+          <td class="tag-mono">R02</td>
+          <td>NFC-e com valor >R$10.000 sem destinatário identificado — W16-40</td>
+          <td class="tag-mono">2026.002</td>
+          <td><span class="risk-badge critical">Rejeição Auto.</span></td>
+          <td><span class="risk-high">Alta</span></td>
+          <td style="color:var(--red);font-family:var(--font-mono);font-size:11px">15/06/2026</td>
+        </tr>
+        <tr>
+          <td class="tag-mono">R03</td>
+          <td>PDV emitindo NF-e tpImp=6 sem QR Code versão 3 — rejeição ZX02-220</td>
+          <td class="tag-mono">2026.002</td>
+          <td><span class="risk-badge critical">Rejeição</span></td>
+          <td><span class="risk-high">Alta</span></td>
+          <td style="font-family:var(--font-mono);font-size:11px">03/08/2026</td>
+        </tr>
+        <tr>
+          <td class="tag-mono">R04</td>
+          <td>Sistema não tratar cStat=120 e interromper fluxo em nota autorizada com alerta</td>
+          <td class="tag-mono">2026.002</td>
+          <td><span class="risk-badge critical">Parada Operacional</span></td>
+          <td><span class="risk-med">Média</span></td>
+          <td style="font-family:var(--font-mono);font-size:11px">05/10/2026</td>
+        </tr>
+        <tr>
+          <td class="tag-mono">R05</td>
+          <td>CNPJ alfanumérico causando erro de parse no receptor de NF-e</td>
+          <td class="tag-mono">2026.004</td>
+          <td><span class="risk-badge high">Erro de Carga</span></td>
+          <td><span class="risk-high">Alta</span></td>
+          <td style="font-family:var(--font-mono);font-size:11px">A definir</td>
+        </tr>
+        <tr>
+          <td class="tag-mono">R06</td>
+          <td>Banco de dados com CNPJ como BIGINT causando overflow</td>
+          <td class="tag-mono">2026.004</td>
+          <td><span class="risk-badge critical">Perda de Dados</span></td>
+          <td><span class="risk-high">Alta</span></td>
+          <td style="font-family:var(--font-mono);font-size:11px">A definir</td>
+        </tr>
+        <tr>
+          <td class="tag-mono">R07</td>
+          <td>Falta de homologação na SVRS para emissão PAA — rejeição 1179</td>
+          <td class="tag-mono">2026.001</td>
+          <td><span class="risk-badge high">Rejeição</span></td>
+          <td><span class="risk-med">Média</span></td>
+          <td style="font-family:var(--font-mono);font-size:11px">03/08/2026</td>
+        </tr>
+        <tr>
+          <td class="tag-mono">R08</td>
+          <td>Impressora térmica não suportando DANFE Simplificado Tipo 2</td>
+          <td class="tag-mono">2026.003</td>
+          <td><span class="risk-badge high">Autuação Fiscal</span></td>
+          <td><span class="risk-med">Média</span></td>
+          <td style="font-family:var(--font-mono);font-size:11px">03/08/2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RECOMENDAÇÕES -->
+<section class="section" id="recomendacoes">
+  <div class="section-label">Seção 19</div>
+  <h2><span class="h2-num">//</span> Recomendações</h2>
+
+  <h3>Para a Diretoria / Gestores</h3>
+  <div class="callout">1. <strong>Mobilizar equipe de TI imediatamente</strong> para as NTs 2026.001 e 2026.002, com prazo crítico em <strong>03/08/2026</strong> (menos de 2 meses).</div>
+  <div class="callout">2. Alocar recursos dedicados para o <strong>DANFE Simplificado Tipo 2</strong> — esta é a mudança de maior abrangência do ano, impactando PDVs, frentes de caixa e integrações ERP.</div>
+  <div class="callout warn">3. ⚠ Revisar <strong>urgentemente</strong> processos de emissão de NF-e de saída que referenciam NFC-e — risco de <strong>rejeição automática em 15/06/2026</strong> (9 dias).</div>
+  <div class="callout">4. Garantir ambiente de homologação SEFAZ ativo e conectado à <strong>SVRS</strong> para os testes.</div>
+
+  <h3>Para a Equipe de TI</h3>
+  <div class="callout">1. Priorizar o tratamento do <strong>cStat=120</strong> — é a mudança mais silenciosa e mais perigosa se ignorada: nota autorizada que o sistema pode bloquear incorretamente.</div>
+  <div class="callout">2. Atualizar o <strong>schema XSD</strong> antes de qualquer outra mudança da NT 2026.004 — impacta toda a cadeia de validação.</div>
+  <div class="callout warn">3. Implementar <strong>alertas de monitoramento</strong> para as novas rejeições (cód. 1178–1184, 679, 711) e o novo cStat=120.</div>
+  <div class="callout">4. Criar um <strong>ambiente de testes isolado</strong> para o DANFE Simplificado Tipo 2 com impressora térmica 80mm real.</div>
+
+  <h3>Para a Equipe Fiscal</h3>
+  <div class="callout danger">1. ⚠ Revisar <strong>urgentemente</strong> todos os processos que referenciam NFC-e em NF-e de saída — risco de rejeição a partir de <strong>15/06/2026</strong>.</div>
+  <div class="callout">2. Verificar se os estados onde a empresa opera definiram <strong>limites diferentes de R$10.000</strong> para o novo controle W16-40.</div>
+  <div class="callout">3. Atualizar procedimentos de <strong>arquivo e guarda do DANFE</strong> para incluir o Tipo 2 (prazo de guarda: 5 anos).</div>
+  <div class="callout">4. Capacitar a equipe do PDV sobre o novo modelo de <strong>autorização com alerta</strong> — operadores devem entender que cStat=120 não é erro.</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-left">
+    NF-e SEFAZ · Análise Técnica 2026 · Emitido 06/06/2026<br>
+    Base: Portal NF-e — <a href="https://www.nfe.fazenda.gov.br" style="color:var(--accent);text-decoration:none">nfe.fazenda.gov.br</a>
+  </div>
+  <div class="footer-right">Documento gerado automaticamente via análise técnica especializada</div>
+</footer>
+
+</main>
+
+<button class="print-btn" onclick="window.print()">⊞ Imprimir / PDF</button>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+  document.getElementById('progressBar').style.transform = `scaleX(${progress})`;
+});
+
+// Smooth scroll
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  event.target.closest('.nav-link')?.classList.add('active');
+}
+
+// Active link on scroll
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+});
+
+// Checklist toggle
+function toggle(li) {
+  li.classList.toggle('checked');
+  updateCounters();
+}
+
+function updateCounters() {
+  const devLists = document.querySelectorAll('[id^="cl-dev"]');
+  const fiscalLists = document.querySelectorAll('[id^="cl-fiscal"]');
+
+  let devChecked = 0, devTotal = 0;
+  devLists.forEach(ul => {
+    ul.querySelectorAll('li').forEach(li => {
+      devTotal++;
+      if (li.classList.contains('checked')) devChecked++;
+    });
+  });
+
+  let fiscalChecked = 0, fiscalTotal = 0;
+  fiscalLists.forEach(ul => {
+    ul.querySelectorAll('li').forEach(li => {
+      fiscalTotal++;
+      if (li.classList.contains('checked')) fiscalChecked++;
+    });
+  });
+
+  document.getElementById('devCount').textContent = devChecked;
+  document.getElementById('devTotal').textContent = devTotal;
+  document.getElementById('fiscalCount').textContent = fiscalChecked;
+  document.getElementById('fiscalTotal').textContent = fiscalTotal;
+}
+
+updateCounters();
+</script>
+
+<style>
+@media print {
+  #sidebar, .print-btn, .progress-bar { display: none !important; }
+  main { margin-left: 0 !important; }
+  body { background: white !important; color: black !important; }
+  .section { border-color: #ddd !important; }
+  .hero { background: white !important; border-bottom: 2px solid #000 !important; }
+}
+</style>
+</body>
+</html>
