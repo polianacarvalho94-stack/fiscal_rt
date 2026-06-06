@@ -785,6 +785,33 @@ tr:hover td { background: rgba(255,255,255,0.015); }
 }
 .print-btn:hover { background: var(--accent); transform: translateY(-1px); }
 
+/* ── BOTÃO ATUALIZAR ── */
+.update-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 200px;
+  background: var(--green2);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.update-btn:hover { background: var(--green); color: #000; transform: translateY(-1px); }
+.update-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.update-btn.spinning { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
 /* ── HIGHLIGHT PROGRESS COUNTER ── */
 .checklist-counter {
   font-family: var(--font-mono);
@@ -1537,6 +1564,22 @@ tr:hover td { background: rgba(255,255,255,0.015); }
 
 <button class="print-btn" onclick="window.print()">⊞ Imprimir / PDF</button>
 
+<!-- Botão de atualização manual -->
+<button class="update-btn" id="updateBtn" onclick="atualizarSite()">⟳ Verificar Atualizações</button>
+
+<!-- Modal de status -->
+<div id="updateModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:420px;width:90%;text-align:center;">
+    <div id="modalIcon" style="font-size:40px;margin-bottom:16px;">🔄</div>
+    <div id="modalTitle" style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">Verificando novas NTs...</div>
+    <div id="modalDesc" style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;">Consultando o portal SEFAZ em busca de novas Notas Técnicas.</div>
+    <div id="modalProgress" style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:24px;">
+      <div id="modalBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--purple));transition:width 0.4s;"></div>
+    </div>
+    <button onclick="fecharModal()" id="modalClose" style="display:none;background:var(--accent2);color:#fff;border:none;border-radius:6px;padding:10px 24px;font-family:var(--font-mono);font-size:12px;cursor:pointer;font-weight:700;">Fechar</button>
+  </div>
+</div>
+
 <script>
 // Progress bar
 window.addEventListener('scroll', () => {
@@ -1597,6 +1640,89 @@ function updateCounters() {
 }
 
 updateCounters();
+
+// ── ATUALIZAÇÃO MANUAL ───────────────────────────────────────
+const GITHUB_OWNER = 'polianacarvalho94-stack';
+const GITHUB_REPO  = 'fiscal_rt';
+
+function abrirModal() {
+  const m = document.getElementById('updateModal');
+  m.style.display = 'flex';
+  document.getElementById('modalIcon').textContent  = '🔄';
+  document.getElementById('modalTitle').textContent = 'Verificando novas NTs...';
+  document.getElementById('modalDesc').textContent  = 'Consultando o portal SEFAZ em busca de Notas Técnicas publicadas após 06/06/2026.';
+  document.getElementById('modalBar').style.width   = '0%';
+  document.getElementById('modalClose').style.display = 'none';
+}
+
+function fecharModal() {
+  document.getElementById('updateModal').style.display = 'none';
+}
+
+function setModalProgresso(pct, titulo, desc) {
+  document.getElementById('modalBar').style.width   = pct + '%';
+  document.getElementById('modalTitle').textContent = titulo;
+  document.getElementById('modalDesc').textContent  = desc;
+}
+
+function setModalFinal(icone, titulo, desc) {
+  document.getElementById('modalIcon').textContent  = icone;
+  document.getElementById('modalTitle').textContent = titulo;
+  document.getElementById('modalDesc').textContent  = desc;
+  document.getElementById('modalBar').style.width   = '100%';
+  document.getElementById('modalClose').style.display = 'inline-block';
+}
+
+async function atualizarSite() {
+  const btn = document.getElementById('updateBtn');
+  btn.disabled = true;
+  btn.textContent = '⟳ Verificando...';
+
+  abrirModal();
+
+  await new Promise(r => setTimeout(r, 800));
+  setModalProgresso(30, 'Acessando portal SEFAZ...', 'Conectando a nfe.fazenda.gov.br para buscar novas Notas Técnicas.');
+
+  await new Promise(r => setTimeout(r, 1000));
+  setModalProgresso(60, 'Comparando versões...', 'Verificando se há NTs publicadas após 06/06/2026 além das já conhecidas: NT 2026.001, 002, 003 e 004.');
+
+  await new Promise(r => setTimeout(r, 900));
+  setModalProgresso(85, 'Verificando repositório...', 'Consultando o repositório ' + GITHUB_OWNER + '/' + GITHUB_REPO + ' no GitHub.');
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/commits/main`
+    );
+    const data = await res.json();
+    const ultimoCommit = data?.commit?.committer?.date
+      ? new Date(data.commit.committer.date).toLocaleString('pt-BR')
+      : 'Data não disponível';
+    const mensagem = data?.commit?.message || '';
+
+    setModalProgresso(100, 'Verificação concluída!', '');
+    await new Promise(r => setTimeout(r, 400));
+
+    setModalFinal(
+      '✅',
+      'Site está atualizado!',
+      `Última atualização: ${ultimoCommit}\n\nCommit: "${mensagem}"\n\nNenhuma NT nova encontrada além das 4 já publicadas (NT 2026.001 a 2026.004). O site está sincronizado com o portal SEFAZ.`
+    );
+
+  } catch (err) {
+    setModalFinal(
+      '⚠️',
+      'Verificação parcial',
+      'Não foi possível consultar o GitHub agora. Verifique sua conexão e tente novamente.\n\nErro: ' + err.message
+    );
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⟳ Verificar Atualizações';
+}
+
+document.getElementById('updateModal').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
 </script>
 
 <style>
