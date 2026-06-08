@@ -1,10 +1,11 @@
-# Executar como Administrador — instala o sync como serviço do Windows
-$nodePath  = "C:\Program Files\nodejs\node.exe"
-$syncScript = "C:\Users\polia\OneDrive\Área de Trabalho\meu-site\sync.js"
-$workDir    = "C:\Users\polia\OneDrive\Área de Trabalho\meu-site"
-$usuario    = $env:USERNAME
+# Executar como Administrador
+# Registra o sync silencioso como tarefa do Windows (sem janelas)
 
-$action    = New-ScheduledTaskAction -Execute $nodePath -Argument "`"$syncScript`"" -WorkingDirectory $workDir
+$wscript = "C:\Windows\System32\wscript.exe"
+$vbs     = "C:\Users\polia\OneDrive\Área de Trabalho\meu-site\sync-silencioso.vbs"
+$usuario = $env:USERNAME
+
+$action    = New-ScheduledTaskAction -Execute $wscript -Argument "`"$vbs`""
 $trigger   = New-ScheduledTaskTrigger -AtLogOn -User $usuario
 $settings  = New-ScheduledTaskSettingsSet -ExecutionTimeLimit 0 -RestartCount 5 -RestartInterval (New-TimeSpan -Minutes 1) -StartWhenAvailable $true
 $principal = New-ScheduledTaskPrincipal -UserId $usuario -LogonType Interactive -RunLevel Highest
@@ -15,16 +16,9 @@ Register-ScheduledTask `
   -Trigger    $trigger `
   -Settings   $settings `
   -Principal  $principal `
-  -Description "Sincronizacao bidirecional GitHub fiscal_rt — inicia automaticamente no login" `
+  -Description "Sync silencioso bidirecional GitHub fiscal_rt" `
   -Force
 
 Write-Host ""
-Write-Host "✅ Servico instalado com sucesso!" -ForegroundColor Green
-Write-Host "   O sync iniciara automaticamente sempre que voce fizer login no Windows." -ForegroundColor Cyan
-Write-Host ""
-Write-Host "Comandos uteis:" -ForegroundColor Yellow
-Write-Host "  Verificar status:  Get-ScheduledTask -TaskName FiscalRT-Sync"
-Write-Host "  Parar o sync:      Stop-ScheduledTask -TaskName FiscalRT-Sync"
-Write-Host "  Iniciar manual:    Start-ScheduledTask -TaskName FiscalRT-Sync"
-Write-Host "  Remover servico:   Unregister-ScheduledTask -TaskName FiscalRT-Sync -Confirm:`$false"
+Write-Host "Servico instalado! Sync iniciara silenciosamente no proximo login." -ForegroundColor Green
 pause
