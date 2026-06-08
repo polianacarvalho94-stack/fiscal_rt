@@ -29,7 +29,7 @@ function log(msg, tipo = 'info') {
 }
 
 function git(cmd) {
-  return execSync(`git ${cmd}`, { cwd: REPO_DIR, encoding: 'utf8' }).trim();
+  return execSync(`git ${cmd}`, GIT_OPTS).trim();
 }
 
 // ── Máquina → GitHub (push) ──────────────────────────────────
