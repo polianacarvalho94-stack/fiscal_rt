@@ -1,17 +1,25 @@
 // Sincronização bidirecional: Máquina ↔ GitHub
 // Execute: node sync.js
 
-const { execSync, exec } = require('child_process');
+const { execSync } = require('child_process');
 const chokidar = require('chokidar');
 const path = require('path');
 const fs = require('fs');
 
 const REPO_DIR = path.resolve(__dirname);
-const PULL_INTERVAL_MS = 30 * 1000; // verifica GitHub a cada 30 segundos
-const DEBOUNCE_MS = 3000;           // aguarda 3s após última edição antes de fazer push
+const PULL_INTERVAL_MS = 30 * 1000;
+const DEBOUNCE_MS = 3000;
 
 let pushTimer = null;
 let syncando = false;
+
+// Opções para suprimir janelas no Windows
+const GIT_OPTS = {
+  cwd: REPO_DIR,
+  encoding: 'utf8',
+  windowsHide: true,       // ← impede abertura de janela cmd
+  stdio: ['ignore', 'pipe', 'pipe'],
+};
 
 // ── Utilitários ──────────────────────────────────────────────
 function log(msg, tipo = 'info') {
