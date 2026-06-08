@@ -1641,6 +1641,58 @@ function updateCounters() {
 
 updateCounters();
 
+// ── CONTADORES DINÂMICOS DE PRAZO ────────────────────────────
+function diasAte(dataStr) {
+  const [dia, mes, ano] = dataStr.split('/').map(Number);
+  const alvo = new Date(ano, mes - 1, dia);
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const diff = Math.ceil((alvo - hoje) / (1000 * 60 * 60 * 24));
+  return diff;
+}
+
+// Prazos ordenados — encontra o próximo que ainda não venceu
+const prazos = [
+  { data: '15/06/2026', label: '15/06 · BA02-35' },
+  { data: '03/08/2026', label: '03/08 · PAA+DANFE' },
+  { data: '05/10/2026', label: '05/10 · Alertas'  },
+];
+
+function atualizarContadores() {
+  const proximo = prazos.find(p => diasAte(p.data) >= 0);
+  const el = document.getElementById('proximoPrazoContador');
+  const lb = document.getElementById('proximoPrazoLabel');
+
+  if (proximo) {
+    const dias = diasAte(proximo.data);
+    el.textContent = dias === 0 ? 'HOJE' : dias + ' dias';
+    el.style.color = dias <= 7 ? 'var(--red)' : dias <= 30 ? 'var(--yellow)' : 'var(--accent)';
+    lb.textContent = proximo.label;
+  } else {
+    el.textContent = '—';
+    lb.textContent = 'Todos os prazos passados';
+  }
+
+  // Atualiza span inline nas recomendações
+  const spanBA = document.getElementById('diasBA0235');
+  if (spanBA) spanBA.textContent = diasAte('15/06/2026');
+
+  // Atualiza linha do cronograma
+  const tl = document.getElementById('timelineW16');
+  if (tl) {
+    const d = diasAte('01/06/2026');
+    tl.textContent = d >= 0
+      ? `01/06/2026 — daqui a ${d} dias`
+      : `01/06/2026 — há ${Math.abs(d)} dias`;
+  }
+}
+
+atualizarContadores();
+// Atualiza à meia-noite sem precisar recarregar a página
+const agora = new Date();
+const msMeianoite = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1) - agora;
+setTimeout(() => { atualizarContadores(); setInterval(atualizarContadores, 86400000); }, msMeianoite);
+
 // ── ATUALIZAÇÃO MANUAL ───────────────────────────────────────
 const GITHUB_OWNER = 'polianacarvalho94-stack';
 const GITHUB_REPO  = 'fiscal_rt';
